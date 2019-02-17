@@ -6,10 +6,10 @@
 
 AFN langage_vide(); //creer un alphabet=> AFN  //lea
 AFN mot_vide(); //ajouter a un alphabet le mot vide //lea
-AFN mot(char caractere); //chr
+AFN mot(char caractere); //chr//fait
 
 
-AFN reunion (AFN afn1, AFN afn2);//chr
+AFN reunion (AFN afn1, AFN afn2);//chr//a voir avec la concat
 AFN concat (AFN afn1, AFN afn2);//lea enleve des etats accepteurs
 AFN etoile (AFN afn);//lea
 
@@ -100,21 +100,7 @@ int main()
 				tabAFN[tailleTabAFN]=etoile (tabAFN[ind1]);
 				tailleTabAFN++;
 				break;
-			case 9 : 
-				aff_AFD(tabAFD, tailleTabAFD);
-				ind1=choix(tailleTabAFD);
-				if(ind1==-1)//tableau vide
-					break;
-				printf("quel mot tester?\n");
-				scanf(" %s", chaine);
-				existe= exec_automate(tabAFD[ind1], chaine);
-				if(existe)
-					printf("le mot est accepte par l automate\n");
-				else
-					printf("le mot n est pas accepte par l automate\n");
-				
-				break;
-			case 10 : 
+			case 9 :
 				aff_AFN(tabAFN, tailleTabAFN);
 				ind1=choix(tailleTabAFN);
 				if(ind1==-1)//tableau vide
@@ -123,7 +109,7 @@ int main()
 				tabAFD[tailleTabAFD]=determinisation(tabAFN[ind1]);//verifiere langage identique
 				tailleTabAFD++;
 				break;
-			case 11 : 
+			case 10 : 
 				aff_AFD(tabAFD, tailleTabAFD);
 				ind1=choix(tailleTabAFD);
 				if(ind1==-1)//tableau vide
@@ -132,6 +118,20 @@ int main()
 				tabAFD[tailleTabAFD]=minimisation(tabAFD[ind1]);//verifiere langage identique
 				tailleTabAFD++;
 				break;
+			case 11 : 
+				aff_AFD(tabAFD, tailleTabAFD);
+				ind1=choix(tailleTabAFD);
+				//if(ind1==-1)//tableau vide
+					//break;
+				printf("quel mot tester?\n");
+				scanf(" %s", chaine);
+				existe= exec_automate(tabAFD[ind1], chaine);
+				if(existe)
+					printf("le mot est accepte par l automate\n");
+				else
+					printf("le mot n est pas accepte par l automate\n");
+				
+				break;	
 			case 12 : 
 				quitter=true;
 				break;
@@ -181,7 +181,105 @@ AFN mot(char caractere)
 
 AFN reunion (AFN afn1, AFN afn2)
 {
+	int i, j, tailleMaxAlpha=0;
+	AFN new;
+	_Bool appartient=false, appartient2;
 	
+	//etats
+	new.tailleEtats=afn1.tailleEtats+afn2.tailleEtats-1;//-1 car on supp les 2 etats initiaux de afn et afn2 et qu on rajoute celui de new
+	new.etats=calloc(new.tailleEtats, sizeof(int));
+	for(i=0; i<new.tailleEtats; i++)
+	{
+		new.etats[i]=i;
+	} 
+	
+	
+	//alphabets
+	tailleMaxAlpha=afn1.tailleAlpha+afn2.tailleAlpha;//c est la taille max, pas forcement la reelle
+	new.alphabet=calloc(tailleMaxAlpha, sizeof(char));
+	for(i=0; i<afn1.tailleAlpha; i++)//on met l alphabet de afn1 dans l alphabet de new
+	{
+		new.alphabet[i]=afn1.alphabet[i];
+	}
+	new.tailleAlpha=afn1.tailleAlpha;
+	//si le caractere n est pas deja dans l alphabet de new, on rajoute celui qui est dans afn2
+	for(i=0; i<afn2.tailleAlpha; i++)
+	{
+		appartient=false;
+		for(j=0;j<afn1.tailleAlpha;j++)
+		{
+			if(new.alphabet[j]==afn2.alphabet[i])
+			{
+				appartient=true;
+				break;
+			}
+		}
+		
+		if(!appartient)
+		{
+			new.alphabet[new.tailleAlpha]=afn2.alphabet[i];
+			new.tailleAlpha++;
+		}
+	}
+	
+	new.alphabet=realloc(new.alphabet, (new.tailleAlpha*sizeof(char)));
+	
+	//etat initial
+	new.etatInit=0;
+	
+	//etats accepteurs
+	new.tailleAccept=afn1.tailleAccept+afn2.tailleAccept;
+	appartient=false;
+	appartient2=false;
+	//si les 2 ont un etat initial accepteur, il faut faire -1, sinon l un plus l autre
+	for(i=0; i<afn1.tailleAccept; i++)
+	{
+		if(afn1.etatAccept[i]==0)
+			appartient=true;
+	}
+	for(i=0; i<afn2.tailleAccept; i++)
+	{
+		if(afn2.etatAccept[i]==0)
+			appartient2=true;
+	}
+	
+	if(appartient&&appartient2)//les deux ont un etat initial accepteur
+		new.tailleAccept--;
+	
+	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
+	
+	for(i=0; i<afn1.tailleAccept; i++)
+	{
+		new.etatAccept[i]=afn1.etatAccept[i];//+0 car on a rajoute l etat initial mais enleve celui de afn1
+	}
+	for(i=0; i<afn2.tailleAccept; i++)
+	{
+		if(afn2.etatAccept[i]!=0)
+		{
+			new.etatAccept[afn1.tailleAccept+i]=afn2.etatAccept[i]+afn1.tailleEtats-1;//-1 pour enlever l etat initial de afn1
+		}
+	}
+	
+	//transitions
+	new.tailleTrans=afn1.tailleTrans+afn2.tailleTrans;
+	new.transitions=calloc(new.tailleTrans, sizeof(Trans));
+	for(i=0; i<afn1.tailleTrans; i++)
+	{
+		new.transitions[i].depart=afn1.transitions[i].depart;
+		new.transitions[i].caractere=afn1.transitions[i].caractere;
+		new.transitions[i].arrivee=afn1.transitions[i].arrivee;
+	}
+	for(i=0; i<afn2.tailleTrans; i++)
+	{
+		if(afn2.transitions[i].depart==0)
+			new.transitions[i+afn1.tailleTrans].depart=0;
+		else
+			new.transitions[i+afn1.tailleTrans].depart=afn2.transitions[i].depart+afn1.tailleEtats;
+		
+		new.transitions[i+afn1.tailleTrans].caractere=afn2.transitions[i].caractere;
+		new.transitions[i+afn1.tailleTrans].arrivee=afn2.transitions[i].arrivee+afn1.tailleEtats-1;
+	}
+	return new;
 	
 }
 
@@ -197,7 +295,33 @@ AFN etoile (AFN afn)
 
 _Bool exec_automate(AFD afd, char * mot)
 {
-	
+	_Bool retour=true, existe=false;
+	int i, j, lenght=strlen(mot), depart=0;
+	for(i=0; i<lenght; i++)
+	{
+		for(j=0; j<afd.tailleAlpha; j++)
+		{
+			if(mot[i]==afd.alphabet[j])
+			{
+				existe=true;
+				break;
+			}
+		}
+		
+		if(!existe)//il n a pas trouve le caractere dans l alphabet
+		{
+			retour=false;
+			break;
+		}
+			
+		depart=afd.(transition[depart][j]);//a verifier en fct de la determinisation
+		if(depart==' ')
+		{
+			retour=false;
+			break;
+		}
+	}
+	return retour;
 }
 
 AFD determinisation(AFN afn)

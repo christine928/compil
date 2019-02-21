@@ -22,6 +22,7 @@ AFD minimisation (AFD afd); //chr
 void aff_AFN (AFN * AF, int taille);//type vaut false si AFN, true pour AFD
 void aff_AFD( AFD * AF, int taille);//type vaut false si AFN, true pour AFD
 int choix(int taille);
+_Bool contientTab(int **bigTab, int tab);
 
 //mot=ajoutAfN, vide=initAFN (mot et langage)
 int main()
@@ -345,9 +346,9 @@ _Bool exec_automate(AFD afd, char * mot)
 	return retour;
 }
 
-AFD determinisation(AFN afn)
+AFD determinisation(AFN afn) //faire la création de l'afd au fur et à mesure et la fonction contientTab
 {
-	int i=0, j=0, k=0, l=0, taille = 1, length = 0;
+	int i=0, j=0, k=0, l=0, taille=1, length=0, init=0;
 	int depart, trans;
 	_Bool NDet == false, stop == false; //NDet <=> Non Déterministe
 	int **tabNewEtats; //tableau des nouveaux états de l'afd
@@ -367,34 +368,42 @@ AFD determinisation(AFN afn)
 	
 	//déterminisation
 	if(NDet){
-		tabNewEtats = malloc(1*sizeof(int*));
+		tabNewEtats = malloc(2*sizeof(int*));
 		tabNewEtats[0] = malloc(2*sizeof(int));//première case du tableau est le nombre d'états q'uil contient <=> sa taille
 		tabNewEtats[0][0] = 1; //initialement on regarde pour l'état 0 seul donc taille de 1
-		i = 0;
+		tabNewEtats[0][1] = 0;
+		tabNewEtats[1] = malloc(2*sizeof(int));
+		i = 1;
 		do{
-			for(j=0;j<afd.tailleAlpha;j++){//pour chaque état on regarde la transition j associée
-				for(length=0;length<tabNewEtats[i][0];length++){//on regarde état par état (les états composants le nouvel état de l'afd)
+			for(j=0;j<afd.tailleAlpha;j++){//on regarde la transition j
+				for(length=0;length<tabNewEtats[init][0];length++){//on regarde état par état (les états composants le nouvel état de l'afd)
 					for(k=0;k<afn.tailleTrans;k++){ //si une transistion j existe alors on écrit l'Etat d'arrivé (de l'afn) à la suite du nouvel Etat en cours de création
-						if((afn.transitions[k].depart == tabNewEtats[i][length]) && (afn.transitions[k].caractere == afd.alphabet[j])){
+						if((afn.transitions[k].depart == tabNewEtats[init][length]) && (afn.transitions[k].caractere == afd.alphabet[j])){
 							l++;
 							taille++;
 							tabNewEtats[i] = realloc((l+1)*sizeof(int));
 							tabNewEtats[i][l] = afn.transitions[k].arrivee;
 						}
 					}
-					tabNewEtats[i][0] = taille;
-					l = 0;
-					i++;
-					tabNewEtats = realloc((i+1)*sizeof(int*));
-					tabNewEtats[i] = malloc(2*sizeof(int))
 				}
 				tabNewEtats[i][0] = taille;
-				i++;
-				l = 1;
-				taille = 1;
+				l = 0;
+				if(contientTab(tabNewEtats, tabNewEtats[i]))//si le couple n'existait pas déjà
+					i++;
+					
+				else
+					free(tabNewEtats[i]);
+						
+				tabNewEtats = realloc((i+1)*sizeof(int*));
+				tabNewEtats[i] = malloc(2*sizeof(int));
 			}
+			if(init == i)//il n'y a pas de nouveau couple et on a déjà testé tous les couples trouvés
+				stop = true;
+				
+			init ++;
 		}while(stop == false);
 	}
+	
 	else{ //l'afn est déjà déterministe
 		afd.etats = afn.etats;
 		afd.alphabet = afn.alphabet;
@@ -418,6 +427,11 @@ AFD determinisation(AFN afn)
 	}
 	
 	return afd;
+}
+
+_Bool contientTab(int **bigTab, int tab)
+{
+	
 }
 
 AFD minimisation (AFD afd)

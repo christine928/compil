@@ -145,16 +145,37 @@ int main()
 	return 0;
 }
 
-AFN langage_vide()
+AFN langage_vide() // -->()
 {
-	
-	
+	AFN new;
+	new.tailleEtats=1;//l etat initial est l etat accepteur
+	new.etats=calloc(new.tailleEtats, sizeof(int));
+	new.etats[0]=0;
+	new.tailleAlpha=0;
+	new.alphabet=NULL;
+	new.etatInit=0;
+	new.tailleAccept=0;
+	new.etatAccept=NULL;
+	new.tailleTrans=0;
+	new.transitions=NULL;
+	return new;	
 }
 
 AFN mot_vide()
 {
-	
-	
+	AFN new;
+	new.tailleEtats=1;//l etat initial est l etat accepteur
+	new.etats=calloc(new.tailleEtats, sizeof(int));
+	new.etats[0]=0;
+	new.tailleAlpha=0;
+	new.alphabet=NULL;
+	new.etatInit=0;
+	new.tailleAccept=1;
+	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
+	new.etatAccept[0]=0;
+	new.tailleTrans=0;
+	new.transitions=NULL;
+	return new;	
 }
 AFN mot(char caractere)
 {
@@ -326,12 +347,38 @@ _Bool exec_automate(AFD afd, char * mot)
 
 AFD determinisation(AFN afn)
 {
+	//~ int i, j;
+	//~ int depart, trans;
+	//~ _Bool NDet == false;
+	//~ AFD afd;
 	
+	//~ //verif si est bien non déterministe : s'il y a une ambiguïté à un moment
+	//~ for(i=0;i<afd.tailleTrans;i++){
+		//~ depart = afd.transitions[i].depart;
+		//~ trans = afd.transitions[i].transitions;
+		//~ for(j=i+1;j<afd.tailleTrans;j++){
+			//~ if((afd.transitions[j].depart == depart) && (afd.transitions[j].transitions == trans))
+				//~ NDet = true;
+		//~ }
+	//~ }
+	
+	//~ j = 0;
+	
+	//~ //déterminisation
+	//~ if(NDet){
+		//~ for(i=0;i<afd.tailleTrans;i++){
+			//~ if(afn.transitions[i].depart == afn.etats[0])
+				//~ tab
+		//~ do{
+			//~ afd.etats[i]
+		//~ }while();
+	//~ }
+	//~ return afd;
 }
 
 AFD minimisation (AFD afd)
 {
-	
+
 }
 
 

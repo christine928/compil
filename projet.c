@@ -336,11 +336,17 @@ _Bool exec_automate(AFD afd, char * mot)
 		}
 			
 		depart=afd.(transition[depart][j]);//a verifier en fct de la determinisation
-		if(depart==' ')
+		depart=afd.(transition[depart][j]);//a verifier en fct de la determinisation
+		if(depart==-1)
 		{
 			retour=false;
 			break;
 		}
+	}
+	
+	for(i=0; i<afd.tailleAccept; i++)//on verifie qu'on a atteri dans un accepteur
+	{
+		retour=retour||(depart==afd.etatAccept[i]);
 	}
 	return retour;
 }

@@ -347,7 +347,7 @@ _Bool exec_automate(AFD afd, char * mot)
 
 AFD determinisation(AFN afn)
 {
-	int i, j;
+	int i=0, j=0, k=0, l=0, taille = 1, length = 0;
 	int depart, trans;
 	_Bool NDet == false, stop == false; //NDet <=> Non Déterministe
 	int **tabNewEtats; //tableau des nouveaux états de l'afd
@@ -367,23 +367,54 @@ AFD determinisation(AFN afn)
 	
 	//déterminisation
 	if(NDet){
+		tabNewEtats = malloc(1*sizeof(int*));
+		tabNewEtats[0] = malloc(2*sizeof(int));//première case du tableau est le nombre d'états q'uil contient <=> sa taille
+		tabNewEtats[0][0] = 1; //initialement on regarde pour l'état 0 seul donc taille de 1
+		i = 0;
 		do{
-			for(i=0;i<afd.tailleTrans;i++){
-				if(afn.transitions[i].depart == afn.etats[0])
-					tab
+			for(j=0;j<afd.tailleAlpha;j++){//pour chaque état on regarde la transition j associée
+				for(length=0;length<tabNewEtats[i][0];length++){//on regarde état par état (les états composants le nouvel état de l'afd)
+					for(k=0;k<afn.tailleTrans;k++){ //si une transistion j existe alors on écrit l'Etat d'arrivé (de l'afn) à la suite du nouvel Etat en cours de création
+						if((afn.transitions[k].depart == tabNewEtats[i][length]) && (afn.transitions[k].caractere == afd.alphabet[j])){
+							l++;
+							taille++;
+							tabNewEtats[i] = realloc((l+1)*sizeof(int));
+							tabNewEtats[i][l] = afn.transitions[k].arrivee;
+						}
+					}
+					tabNewEtats[i][0] = taille;
+					l = 0;
+					i++;
+					tabNewEtats = realloc((i+1)*sizeof(int*));
+					tabNewEtats[i] = malloc(2*sizeof(int))
+				}
+				tabNewEtats[i][0] = taille;
+				i++;
+				l = 1;
+				taille = 1;
 			}
 		}while(stop == false);
 	}
 	else{ //l'afn est déjà déterministe
-		int * etats;afd.etats = afn.etats;
-		char * alphabet;
-		int ** transitions; //car un unique resultat pour (depart, car), contrairement au AFN
-		// _|_ = -1
-		int etatInit;
-		int * etatAccept;
-		int tailleEtats;
-		int tailleAlpha;
-		int tailleAccept;
+		afd.etats = afn.etats;
+		afd.alphabet = afn.alphabet;
+		afd.etatInit = afn.etatInit;
+		afd.etatAccept = afn.etatAccept;
+		afd.tailleEtats = afn.tailleEtats;
+		afd.tailleAlpha = afn.tailleAlpha;
+		afd.tailleAccept = afn.tailleAccept;
+		afd.transitions = malloc(afd.tailleEtats * sizeof(int*));
+		for(i=0;i<afn.tailleEtats;i++){
+			afd.transitions[i] = malloc(afd.tailleAlpha * sizeof(int));
+			for(j=0;j<afn.tailleAlpha;j++){
+				for(k=0;k<afn.tailleTrans;k++){
+					if((afn.transitions[k].debut == i) && afn.transitions[k].caractere == alphabet[j])
+						afd.transitions[i][alphabet[j]] = afn.transitions[k].arrivee;
+				}
+				if(afd.transitions[i][alphabet[j]] == NULL)
+					afd.transitions[i][alphabet[j]] = -1;
+			}
+		}
 	}
 	
 	return afd;
@@ -436,14 +467,14 @@ void aff_AFN( AFN * AF, int taille)
 		printf("}\n");
 		
 		//transitions	
-		printf("\ttransitions = { ");	
-		
-		for(j=0; j<(AF[i]).tailleTrans-1; j++)
-		{
-			printf("(%d, %c, %d), ", ((AF[i]).transitions[j]).depart,  ((AF[i]).transitions[j]).caractere,  ((AF[i]).transitions[j]).arrivee);
+		printf("\transitions = { ");	
+		if((AF[i]).tailleTrans > 0){
+			for(j=0; j<(AF[i]).tailleTrans-1; j++)
+			{
+				printf("(%d, %c, %d), ", ((AF[i]).transitions[j]).depart,  ((AF[i]).transitions[j]).caractere,  ((AF[i]).transitions[j]).arrivee);
+			}
+			printf("(%d, %c, %d) }\n", ((AF[i]).transitions[(AF[i]).tailleTrans-1]).depart,  ((AF[i]).transitions[(AF[i]).tailleTrans-1]).caractere,  ((AF[i]).transitions[(AF[i]).tailleTrans-1]).arrivee);
 		}
-		printf("(%d, %c, %d) }\n", ((AF[i]).transitions[(AF[i]).tailleTrans-1]).depart,  ((AF[i]).transitions[(AF[i]).tailleTrans-1]).caractere,  ((AF[i]).transitions[(AF[i]).tailleTrans-1]).arrivee);
-
 	}
 	
 }
@@ -491,14 +522,15 @@ void aff_AFD( AFD * AF, int taille)
 		//transitions	
 		printf("\ttransitions = ");	
 		
-		for(j=0; j<(AF[i]).tailleEtats; j++)
-		{
-			for(k=0; k<(AF[i]).tailleAlpha;k++)
+		if((AF[i]).tailleTrans > 0){
+			for(j=0; j<(AF[i]).tailleEtats; j++)
 			{
-				printf("\t\ttrans(%d, %c)=%d\n", (AF[i]).etats[j], (AF[i]).alphabet[k],(AF[i]).transitions[j][k]);
+				for(k=0; k<(AF[i]).tailleAlpha;k++)
+				{
+					printf("\t\ttrans(%d, %c)=%d\n", (AF[i]).etats[j], (AF[i]).alphabet[k],(AF[i]).transitions[j][k]);
+				}
 			}
 		}
-		
 	}
 	
 }

@@ -353,33 +353,46 @@ _Bool exec_automate(AFD afd, char * mot)
 
 AFD determinisation(AFN afn)
 {
-	//~ int i, j;
-	//~ int depart, trans;
-	//~ _Bool NDet == false;
-	//~ AFD afd;
+	int i, j;
+	int depart, trans;
+	_Bool NDet == false, stop == false; //NDet <=> Non Déterministe
+	int **tabNewEtats; //tableau des nouveaux états de l'afd
+	AFD afd;
 	
-	//~ //verif si est bien non déterministe : s'il y a une ambiguïté à un moment
-	//~ for(i=0;i<afd.tailleTrans;i++){
-		//~ depart = afd.transitions[i].depart;
-		//~ trans = afd.transitions[i].transitions;
-		//~ for(j=i+1;j<afd.tailleTrans;j++){
-			//~ if((afd.transitions[j].depart == depart) && (afd.transitions[j].transitions == trans))
-				//~ NDet = true;
-		//~ }
-	//~ }
+	//verif si est bien non déterministe : s'il y a une ambiguïté à un moment
+	for(i=0;i<afd.tailleTrans;i++){
+		depart = afd.transitions[i].depart;
+		trans = afd.transitions[i].transitions;
+		for(j=i+1;j<afd.tailleTrans;j++){
+			if((afd.transitions[j].depart == depart) && (afd.transitions[j].transitions == trans))
+				NDet = true;
+		}
+	}
 	
-	//~ j = 0;
+	j = 0;
 	
-	//~ //déterminisation
-	//~ if(NDet){
-		//~ for(i=0;i<afd.tailleTrans;i++){
-			//~ if(afn.transitions[i].depart == afn.etats[0])
-				//~ tab
-		//~ do{
-			//~ afd.etats[i]
-		//~ }while();
-	//~ }
-	//~ return afd;
+	//déterminisation
+	if(NDet){
+		do{
+			for(i=0;i<afd.tailleTrans;i++){
+				if(afn.transitions[i].depart == afn.etats[0])
+					tab
+			}
+		}while(stop == false);
+	}
+	else{ //l'afn est déjà déterministe
+		int * etats;afd.etats = afn.etats;
+		char * alphabet;
+		int ** transitions; //car un unique resultat pour (depart, car), contrairement au AFN
+		// _|_ = -1
+		int etatInit;
+		int * etatAccept;
+		int tailleEtats;
+		int tailleAlpha;
+		int tailleAccept;
+	}
+	
+	return afd;
 }
 
 AFD minimisation (AFD afd)

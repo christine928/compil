@@ -816,6 +816,8 @@ void aff_AFN( AFN * AF, int taille)
 			}
 			printf("(%d, %c, %d) }\n", ((AF[i]).transitions[(AF[i]).tailleTrans-1]).depart,  ((AF[i]).transitions[(AF[i]).tailleTrans-1]).caractere,  ((AF[i]).transitions[(AF[i]).tailleTrans-1]).arrivee);
 		}
+		else
+			printf("}\n");
 	}
 	
 }
@@ -880,6 +882,8 @@ void aff_AFD( AFD * AF, int taille)
 				printf("\n");
 			}
 		}
+		else
+			printf("\ttransitions = il n y en a pas\n");
 	}
 	
 }

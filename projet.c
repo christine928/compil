@@ -434,7 +434,6 @@ _Bool exec_automate(AFD afd, char * mot)
 
 AFD determinisation(AFN afn) //cas transitions vaut -1
 {
-<<<<<<< HEAD
 	int i=0, j=0, k=0, l=0, taille=1, length=0, init=0, m=0, nbTrans=0, identique=0;
 	_Bool NDet=false, stop=false, etatAcc=false, trans=false; //NDet <=> Non Déterministe
 	int **tabNewEtats; //tableau des nouveaux états de l'afd

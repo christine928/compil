@@ -22,7 +22,7 @@ AFD minimisation (AFD afd); //chr
 void aff_AFN (AFN * AF, int taille);//type vaut false si AFN, true pour AFD
 void aff_AFD( AFD * AF, int taille);//type vaut false si AFN, true pour AFD
 int choix(int taille);
-_Bool contientTab(int **bigTab, int tab);
+int contientTab(int **bigTab, int *tab, int taille);
 
 //mot=ajoutAfN, vide=initAFN (mot et langage)
 int main()
@@ -336,7 +336,7 @@ _Bool exec_automate(AFD afd, char * mot)
 			break;
 		}
 			
-		depart=afd.(transition[depart][j]);//a verifier en fct de la determinisation
+		depart=afd.transitions[depart][j];//a verifier en fct de la determinisation
 		if(depart==' ')
 		{
 			retour=false;
@@ -346,20 +346,27 @@ _Bool exec_automate(AFD afd, char * mot)
 	return retour;
 }
 
-AFD determinisation(AFN afn) //faire la création de l'afd au fur et à mesure et la fonction contientTab
+AFD determinisation(AFN afn) //cas transitions vaut -1
 {
-	int i=0, j=0, k=0, l=0, taille=1, length=0, init=0;
-	int depart, trans;
-	_Bool NDet == false, stop == false; //NDet <=> Non Déterministe
+	int i=0, j=0, k=0, l=0, taille=1, length=0, init=0, m=0, nbTrans=0, identique=0;
+	_Bool NDet=false, stop=false, etatAcc=false, trans=false; //NDet <=> Non Déterministe
 	int **tabNewEtats; //tableau des nouveaux états de l'afd
 	AFD afd;
 	
+	//préparation de l'afd
+	afd.alphabet = afn.alphabet;
+	afd.etatInit = 0; //on considère, comme dans le cours, que l'état initial est toujours 0
+	afd.etatAccept = malloc(0*sizeof(int));
+	afd.etats = malloc(1*sizeof(int));
+	afd.transitions = malloc(0*sizeof(int*));
+	afd.tailleAccept = 0;
+	afd.tailleAlpha = afn.tailleAlpha;
+	afd.tailleEtats = 1;
+	
 	//verif si est bien non déterministe : s'il y a une ambiguïté à un moment
-	for(i=0;i<afd.tailleTrans;i++){
-		depart = afd.transitions[i].depart;
-		trans = afd.transitions[i].transitions;
-		for(j=i+1;j<afd.tailleTrans;j++){
-			if((afd.transitions[j].depart == depart) && (afd.transitions[j].transitions == trans))
+	for(i=0;i<afn.tailleTrans;i++){
+		for(j=i+1;j<afn.tailleTrans;j++){
+			if((afn.transitions[j].depart == afn.transitions[i].depart) && (afn.transitions[j].caractere == afn.transitions[i].caractere))
 				NDet = true;
 		}
 	}
@@ -372,41 +379,79 @@ AFD determinisation(AFN afn) //faire la création de l'afd au fur et à mesure e
 		tabNewEtats[0] = malloc(2*sizeof(int));//première case du tableau est le nombre d'états q'uil contient <=> sa taille
 		tabNewEtats[0][0] = 1; //initialement on regarde pour l'état 0 seul donc taille de 1
 		tabNewEtats[0][1] = 0;
+		afd.etats[0] = 0;//l'état initial
 		tabNewEtats[1] = malloc(2*sizeof(int));
 		i = 1;
 		do{
-			for(j=0;j<afd.tailleAlpha;j++){//on regarde la transition j
+			afd.transitions = realloc(afd.transitions, (nbTrans+1)*sizeof(int*));
+			afd.transitions[afd.etats[init]] = realloc(afd.transitions[afd.etats[init]], afd.tailleAlpha*sizeof(int));
+			for(j=0;j<afd.tailleAlpha;j++){//on regarde le caractère j
 				for(length=0;length<tabNewEtats[init][0];length++){//on regarde état par état (les états composants le nouvel état de l'afd)
 					for(k=0;k<afn.tailleTrans;k++){ //si une transistion j existe alors on écrit l'Etat d'arrivé (de l'afn) à la suite du nouvel Etat en cours de création
 						if((afn.transitions[k].depart == tabNewEtats[init][length]) && (afn.transitions[k].caractere == afd.alphabet[j])){
 							l++;
 							taille++;
-							tabNewEtats[i] = realloc((l+1)*sizeof(int));
+							tabNewEtats[i] = realloc(tabNewEtats[i], (l+1)*sizeof(int));
 							tabNewEtats[i][l] = afn.transitions[k].arrivee;
+							trans = true;
+							for(m=0;m<afn.tailleAccept;m++){
+								if(afn.etatAccept[m] == tabNewEtats[i][l])//si au moins un état composant le nouvel état était accepteur alors le nouvel état est accepteur
+									etatAcc = true;
+							}
 						}
 					}
 				}
-				tabNewEtats[i][0] = taille;
-				l = 0;
-				if(contientTab(tabNewEtats, tabNewEtats[i]))//si le couple n'existait pas déjà
-					i++;
-					
-				else
-					free(tabNewEtats[i]);
+				//si on a créé un nouvel état
+				if(trans){
+					tabNewEtats[i][0] = taille;
+					l = 0;
+					identique = contientTab(tabNewEtats, tabNewEtats[i],i);
+					if(identique == -1){//si le couple n'existait pas déjà
+						//création d'un nouvel état
+						afd.etats = realloc(afd.etats, (afd.tailleEtats+1)*sizeof(int));
+						afd.etats[afd.tailleEtats] = i;
+											
+						//création nouvelle transition de l'état init vers l'état i via le caractère j
+						afd.transitions[afd.etats[init]][afd.alphabet[j]] = afd.etats[afd.tailleEtats];
 						
-				tabNewEtats = realloc((i+1)*sizeof(int*));
-				tabNewEtats[i] = malloc(2*sizeof(int));
-			}
+						afd.tailleEtats ++;//nombre d'états actuellement créés
+						
+						//si contient au moins un état accepteur est accepteur
+						if(etatAcc){
+							afd.etatAccept = realloc(afd.etatAccept, (afd.tailleAccept+1)*sizeof(int));
+							afd.etatAccept[afd.tailleAccept] = i;
+							afd.tailleAccept ++;						
+						}
+						
+						i++;
+					}
+						
+					else{
+						afd.transitions[afd.etats[init]][afd.alphabet[j]] = identique;
+						free(tabNewEtats[i]);
+					}
+							
+					tabNewEtats = realloc(tabNewEtats, (i+1)*sizeof(int*));
+					tabNewEtats[i] = malloc(2*sizeof(int));
+				}
+			
+			//si on aucun nouvel état est créé pour une transsition avec le caractère j
+			else
+				afd.transitions[afd.etats[init]][afd.alphabet[j]] = -1;
+			
+				
 			if(init == i)//il n'y a pas de nouveau couple et on a déjà testé tous les couples trouvés
 				stop = true;
-				
+			
+			
+			nbTrans ++;//nombre de transistions actuellement créées	
+			}
 			init ++;
 		}while(stop == false);
 	}
 	
 	else{ //l'afn est déjà déterministe
 		afd.etats = afn.etats;
-		afd.alphabet = afn.alphabet;
 		afd.etatInit = afn.etatInit;
 		afd.etatAccept = afn.etatAccept;
 		afd.tailleEtats = afn.tailleEtats;
@@ -417,11 +462,11 @@ AFD determinisation(AFN afn) //faire la création de l'afd au fur et à mesure e
 			afd.transitions[i] = malloc(afd.tailleAlpha * sizeof(int));
 			for(j=0;j<afn.tailleAlpha;j++){
 				for(k=0;k<afn.tailleTrans;k++){
-					if((afn.transitions[k].debut == i) && afn.transitions[k].caractere == alphabet[j])
-						afd.transitions[i][alphabet[j]] = afn.transitions[k].arrivee;
+					if((afn.transitions[k].depart == i) && afn.transitions[k].caractere == afd.alphabet[j])
+						afd.transitions[i][afd.alphabet[j]] = afn.transitions[k].arrivee;
 				}
-				if(afd.transitions[i][alphabet[j]] == NULL)
-					afd.transitions[i][alphabet[j]] = -1;
+				if(!afd.transitions[i][afd.alphabet[j]])
+					afd.transitions[i][afd.alphabet[j]] = -1;
 			}
 		}
 	}
@@ -429,9 +474,22 @@ AFD determinisation(AFN afn) //faire la création de l'afd au fur et à mesure e
 	return afd;
 }
 
-_Bool contientTab(int **bigTab, int tab)
+int contientTab(int **bigTab, int *tab, int taille)
 {
-	
+	int i,j;
+	_Bool contient = false;
+	for(i=0;i<taille;i++){
+		if(bigTab[i][0] == tab[0]){//si les tableaux sont de même taille on les compare
+			contient = true;
+			for(j=1;j<tab[0];j++){
+				if(bigTab[i][j] != tab[j])
+					contient = false;
+			}
+			if(contient)
+				break;
+		}
+		return i;
+	}
 }
 
 AFD minimisation (AFD afd)
@@ -481,7 +539,7 @@ void aff_AFN( AFN * AF, int taille)
 		printf("}\n");
 		
 		//transitions	
-		printf("\transitions = { ");	
+		printf("\ttransitions = { ");	
 		if((AF[i]).tailleTrans > 0){
 			for(j=0; j<(AF[i]).tailleTrans-1; j++)
 			{
@@ -536,7 +594,7 @@ void aff_AFD( AFD * AF, int taille)
 		//transitions	
 		printf("\ttransitions = ");	
 		
-		if((AF[i]).tailleTrans > 0){
+		if((AF[i]).transitions != NULL){
 			for(j=0; j<(AF[i]).tailleEtats; j++)
 			{
 				for(k=0; k<(AF[i]).tailleAlpha;k++)

@@ -694,18 +694,14 @@ AFD minimisation (AFD afd)
 	new.etatInit=afd.etatInit;
 	new.tailleAccept=afd.tailleAccept;
 	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
-	for(i=0; i<new.tailleAccept; i++)
+	new.etatAccept[0]=entete[afd.etatAccept[0]];
+	for(i=1; i<new.tailleAccept; i++)
 	{
 		existe=false;
+		
 		for(j=0; j<i; j++)
 		{
-			printf("i=%d, j=%d, new[j]=%d, entete[zfd[i]]=%d\n", i, j, new.etatAccept[j], entete[afd.etatAccept[i]]);
 			if(new.etatAccept[j]==entete[afd.etatAccept[i]])//on l a deja mis comme etat accepteur
-			{
-				existe=true;
-				printf("on met %d\n", entete[afd.etatAccept[i]]);
-			}
-			if(existe)
 			{
 				new.tailleAccept--;
 				new.etatAccept=realloc(new.etatAccept, new.tailleAccept);

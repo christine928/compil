@@ -47,7 +47,7 @@ AFN mot(char caractere);
 
 
 AFN reunion (AFN afn1, AFN afn2);//chr//a voir avec la concat
-AFN concat (AFN afn1, AFN afn2);//lea enleve des etats accepteurs
+AFN concat (AFN afn1, AFN afn2);
 AFN etoile (AFN afn);
 
 _Bool exec_automate(AFD afd, char * mot);

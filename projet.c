@@ -76,34 +76,33 @@ int main()
 	
 	
 
-	tabAFN[2].tailleEtats=3;
-	tabAFN[2].etats=calloc(tabAFN[2].tailleEtats, sizeof(int));
-	for(i=0; i<tabAFN[2].tailleEtats; i++)
-		tabAFN[2].etats[i]=i;
-	tabAFN[2].tailleAlpha=2;
-	tabAFN[2].alphabet=calloc(tabAFN[2].tailleAlpha, sizeof(char));
-	tabAFN[2].alphabet[0]='a';
-	tabAFN[2].alphabet[1]='b';
-	tabAFN[2].etatInit=0;
-	tabAFN[2].tailleAccept=1;
-	tabAFN[2].etatAccept=calloc(tabAFN[2].tailleAccept, sizeof(char));
-	tabAFN[2].etatAccept[0]=2;
-	tabAFN[2].tailleTrans=4;
-	tabAFN[2].transitions=calloc(tabAFN[2].tailleTrans, sizeof(Trans));
-	tabAFN[2].transitions[0].depart=0;
-	tabAFN[2].transitions[0].caractere='a';
-	tabAFN[2].transitions[0].arrivee=0;
-	tabAFN[2].transitions[1].depart=0;
-	tabAFN[2].transitions[1].caractere='a';
-	tabAFN[2].transitions[1].arrivee=1;
-	tabAFN[2].transitions[2].depart=0;
-	tabAFN[2].transitions[2].caractere='b';
-	tabAFN[2].transitions[2].arrivee=0;
-	tabAFN[2].transitions[3].depart=1;
-	tabAFN[2].transitions[3].caractere='a';
-	tabAFN[2].transitions[3].arrivee=2;
+	//~ tabAFN[2].tailleEtats=3;
+	//~ tabAFN[2].etats=calloc(tabAFN[2].tailleEtats, sizeof(int));
+	//~ for(i=0; i<tabAFN[2].tailleEtats; i++)
+		//~ tabAFN[2].etats[i]=i;
+	//~ tabAFN[2].tailleAlpha=2;
+	//~ tabAFN[2].alphabet=calloc(tabAFN[2].tailleAlpha, sizeof(char));
+	//~ tabAFN[2].alphabet[0]='a';
+	//~ tabAFN[2].alphabet[1]='b';
+	//~ tabAFN[2].etatInit=0;
+	//~ tabAFN[2].tailleAccept=1;
+	//~ tabAFN[2].etatAccept=calloc(tabAFN[2].tailleAccept, sizeof(char));
+	//~ tabAFN[2].etatAccept[0]=2;
+	//~ tabAFN[2].tailleTrans=4;
+	//~ tabAFN[2].transitions=calloc(tabAFN[2].tailleTrans, sizeof(Trans));
+	//~ tabAFN[2].transitions[0].depart=0;
+	//~ tabAFN[2].transitions[0].caractere='a';
+	//~ tabAFN[2].transitions[0].arrivee=0;
+	//~ tabAFN[2].transitions[1].depart=0;
+	//~ tabAFN[2].transitions[1].caractere='a';
+	//~ tabAFN[2].transitions[1].arrivee=1;
+	//~ tabAFN[2].transitions[2].depart=0;
+	//~ tabAFN[2].transitions[2].caractere='b';
+	//~ tabAFN[2].transitions[2].arrivee=0;
+	//~ tabAFN[2].transitions[3].depart=1;
+	//~ tabAFN[2].transitions[3].caractere='a';
+	//~ tabAFN[2].transitions[3].arrivee=2;
 	
-	//DETERMINATION : transisiton chelou [2][a]
 	//~ tabAFN[2].tailleEtats=4;
 	//~ tabAFN[2].etats=calloc(tabAFN[2].tailleEtats, sizeof(int));
 	//~ for(i=0; i<tabAFN[2].tailleEtats; i++)
@@ -134,46 +133,44 @@ int main()
 	//~ tabAFN[2].transitions[4].caractere='a';
 	//~ tabAFN[2].transitions[4].arrivee=3;
 	
-	//DETERMINATION : encore plus chelou, l'erreur de segmentation est sur le free qu'à partir d'un certain moment... ?
-	//~ tabAFN[2].tailleEtats=4;
-	//~ tabAFN[2].etats=calloc(tabAFN[2].tailleEtats, sizeof(int));
-	//~ for(i=0; i<tabAFN[2].tailleEtats; i++)
-		//~ tabAFN[2].etats[i]=i;
-	//~ tabAFN[2].tailleAlpha=2;
-	//~ tabAFN[2].alphabet=calloc(tabAFN[2].tailleAlpha, sizeof(char));
-	//~ tabAFN[2].alphabet[0]='a';
-	//~ tabAFN[2].alphabet[1]='b';
-	//~ tabAFN[2].etatInit=0;
-	//~ tabAFN[2].tailleAccept=1;
-	//~ tabAFN[2].etatAccept=calloc(tabAFN[2].tailleAccept, sizeof(char));
-	//~ tabAFN[2].etatAccept[0]=3;
-	//~ tabAFN[2].tailleTrans=8;
-	//~ tabAFN[2].transitions=calloc(tabAFN[2].tailleTrans, sizeof(Trans));
-	//~ tabAFN[2].transitions[0].depart=0;
-	//~ tabAFN[2].transitions[0].caractere='a';
-	//~ tabAFN[2].transitions[0].arrivee=0;
-	//~ tabAFN[2].transitions[1].depart=0;
-	//~ tabAFN[2].transitions[1].caractere='a';
-	//~ tabAFN[2].transitions[1].arrivee=1;
-	//~ tabAFN[2].transitions[2].depart=0;
-	//~ tabAFN[2].transitions[2].caractere='b';
-	//~ tabAFN[2].transitions[2].arrivee=0;
-	//~ tabAFN[2].transitions[3].depart=1;
-	//~ tabAFN[2].transitions[3].caractere='a';
-	//~ tabAFN[2].transitions[3].arrivee=2;
-	//~ tabAFN[2].transitions[4].depart=1;
-	//~ tabAFN[2].transitions[4].caractere='b';
-	//~ tabAFN[2].transitions[4].arrivee=2;
-	//~ tabAFN[2].transitions[5].depart=2;
-	//~ tabAFN[2].transitions[5].caractere='a';
-	//~ tabAFN[2].transitions[5].arrivee=3;
-	//~ tabAFN[2].transitions[6].depart=3;
-	//~ tabAFN[2].transitions[6].caractere='a';
-	//~ tabAFN[2].transitions[6].arrivee=3;
-	//~ tabAFN[2].transitions[7].depart=3;
-	//~ tabAFN[2].transitions[7].caractere='b';
-	//~ tabAFN[2].transitions[7].arrivee=3;
-	
+	tabAFN[2].tailleEtats=4;
+	tabAFN[2].etats=calloc(tabAFN[2].tailleEtats, sizeof(int));
+	for(i=0; i<tabAFN[2].tailleEtats; i++)
+		tabAFN[2].etats[i]=i;
+	tabAFN[2].tailleAlpha=2;
+	tabAFN[2].alphabet=calloc(tabAFN[2].tailleAlpha, sizeof(char));
+	tabAFN[2].alphabet[0]='a';
+	tabAFN[2].alphabet[1]='b';
+	tabAFN[2].etatInit=0;
+	tabAFN[2].tailleAccept=1;
+	tabAFN[2].etatAccept=calloc(tabAFN[2].tailleAccept, sizeof(char));
+	tabAFN[2].etatAccept[0]=3;
+	tabAFN[2].tailleTrans=8;
+	tabAFN[2].transitions=calloc(tabAFN[2].tailleTrans, sizeof(Trans));
+	tabAFN[2].transitions[0].depart=0;
+	tabAFN[2].transitions[0].caractere='a';
+	tabAFN[2].transitions[0].arrivee=0;
+	tabAFN[2].transitions[1].depart=0;
+	tabAFN[2].transitions[1].caractere='a';
+	tabAFN[2].transitions[1].arrivee=1;
+	tabAFN[2].transitions[2].depart=0;
+	tabAFN[2].transitions[2].caractere='b';
+	tabAFN[2].transitions[2].arrivee=0;
+	tabAFN[2].transitions[3].depart=1;
+	tabAFN[2].transitions[3].caractere='a';
+	tabAFN[2].transitions[3].arrivee=2;
+	tabAFN[2].transitions[4].depart=1;
+	tabAFN[2].transitions[4].caractere='b';
+	tabAFN[2].transitions[4].arrivee=2;
+	tabAFN[2].transitions[5].depart=2;
+	tabAFN[2].transitions[5].caractere='a';
+	tabAFN[2].transitions[5].arrivee=3;
+	tabAFN[2].transitions[6].depart=3;
+	tabAFN[2].transitions[6].caractere='a';
+	tabAFN[2].transitions[6].arrivee=3;
+	tabAFN[2].transitions[7].depart=3;
+	tabAFN[2].transitions[7].caractere='b';
+	tabAFN[2].transitions[7].arrivee=3;
 	
 	tailleTabAFD=3;
 	AFD * tabAFD=malloc(tailleTabAFD*sizeof(AFD));
@@ -791,7 +788,7 @@ _Bool exec_automate(AFD afd, char * mot)
 AFD determinisation(AFN afn) //cas transitions vaut -1
 {
 	int i=0, j=0, k=0, l=0, taille=0, length=0, init=0, m=0, nbTrans=0, identique=0;
-	_Bool NDet=false, stop=false, etatAcc=false, trans=false; //NDet <=> Non Déterministe
+	_Bool NDet=false, stop=false, etatAcc=false, trans=false, exist=false; //NDet <=> Non Déterministe
 	int **tabNewEtats; //tableau des nouveaux états de l'afd
 	AFD afd;
 	
@@ -835,18 +832,34 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 						printf("on regarde la transition (%d,%c,%d)\n", afn.transitions[k].depart, afn.transitions[k].caractere, afn.transitions[k].arrivee); 
 						printf("on compare à %d et %c\n", tabNewEtats[init][length], afd.alphabet[j]);
 						if((afn.transitions[k].depart == tabNewEtats[init][length]) && (afn.transitions[k].caractere == afd.alphabet[j])){
-							l++;
-							taille++;
-							tabNewEtats[i] = realloc(tabNewEtats[i], (l+1)*sizeof(int));
-							tabNewEtats[i][l] = afn.transitions[k].arrivee;
-							trans = true;
-							printf("transition existe %d %c\n", tabNewEtats[init][length], afd.alphabet[j]);
-							for(m=0;m<afn.tailleAccept;m++){
-								if(afn.etatAccept[m] == tabNewEtats[i][l]){//si au moins un état composant le nouvel état était accepteur alors le nouvel état est accepteur
-									etatAcc = true;
-									printf("etat accepteur : %d\n",tabNewEtats[i][l]);
+							printf("\n");
+							if(l != 0){
+								for(m=1;m<l+1;m++){
+									printf("%d, ", tabNewEtats[i][m]);
+									if(tabNewEtats[i][m] == afn.transitions[k].arrivee){
+										printf("TROUVE\n");
+										exist = true;
+										break;
+									}
+								}
+								printf("\n");
+							}
+							
+							if(!exist){
+								l++;
+								taille++;
+								tabNewEtats[i] = realloc(tabNewEtats[i], (l+1)*sizeof(int));
+								tabNewEtats[i][l] = afn.transitions[k].arrivee;
+								trans = true;
+								printf("transition existe %d %c\n", tabNewEtats[init][length], afd.alphabet[j]);
+								for(m=0;m<afn.tailleAccept;m++){
+									if(afn.etatAccept[m] == tabNewEtats[i][l]){//si au moins un état composant le nouvel état était accepteur alors le nouvel état est accepteur
+										etatAcc = true;
+										printf("etat accepteur : %d\n",tabNewEtats[i][l]);
+									}
 								}
 							}
+							exist = false;
 						}
 					}
 				}
@@ -861,7 +874,7 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 						afd.etats[afd.tailleEtats] = i;
 											
 						//création nouvelle transition de l'état init vers l'état i via le caractère j
-						afd.transitions[afd.etats[init]][afd.alphabet[j]] = afd.etats[afd.tailleEtats];
+						afd.transitions[afd.etats[init]][j] = afd.etats[afd.tailleEtats];
 						printf("trans amene sur nouveau : transition[%d][%c] = %d\n", afd.etats[init], afd.alphabet[j], afd.etats[afd.tailleEtats]);
 						
 						afd.tailleEtats ++;//nombre d'états actuellement créés
@@ -876,7 +889,7 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 					}
 						
 					else{
-						afd.transitions[afd.etats[init]][afd.alphabet[j]] = identique;
+						afd.transitions[afd.etats[init]][j] = identique;
 						printf("trans amene sur existant : transition[%d][%c] = %d\n", afd.etats[init], afd.alphabet[j], identique);
 						printf("test\n");
 						free(tabNewEtats[i]);
@@ -889,7 +902,7 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 			
 			//si aucun nouvel état n'est créé pour une transition avec le caractère j
 			else{
-				afd.transitions[afd.etats[init]][afd.alphabet[j]] = -1;
+				afd.transitions[afd.etats[init]][j] = -1;
 				printf("trans amene sur rien : transition[%d][%c] = -1\n", afd.etats[init], afd.alphabet[j]);
 			}
 			
@@ -916,18 +929,17 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 			for(j=0;j<afn.tailleAlpha;j++){
 				for(k=0;k<afn.tailleTrans;k++){
 					if((afn.transitions[k].depart == i) && (afn.transitions[k].caractere == afd.alphabet[j])){
-						afd.transitions[i][afd.alphabet[j]] = afn.transitions[k].arrivee;
+						afd.transitions[i][j] = afn.transitions[k].arrivee;
 						printf("afn deja afd et une trans existe : transition[%d][%c] = %d\n", afd.etats[i], afd.alphabet[j], afn.transitions[k].arrivee);
 					}
 				}
-				if(!afd.transitions[i][afd.alphabet[j]]){
-					afd.transitions[i][afd.alphabet[j]] = -1;
+				if(!afd.transitions[i][j]){
+					afd.transitions[i][j] = -1;
 					printf("afn deja afd et aucune trans existe : transition[%d][%c] = -1\n", afd.etats[i], afd.alphabet[j]);
 				}
 			}
 		}
 	}
-	
 	return afd;	
 }
 
@@ -1250,7 +1262,8 @@ void aff_AFD( AFD * AF, int taille)
 				printf("\t\t%d\t", (AF[i]).etats[j]);
 				for(k=0; k<(AF[i]).tailleAlpha;k++)
 				{
-					printf("%d\t",(AF[i]).transitions[(AF[i]).etats[j]][(AF[i]).alphabet[k]]);
+					//printf("%d\t",(AF[i]).transitions[(AF[i]).etats[j]][(AF[i]).alphabet[k]]);
+					printf("%d\t",(AF[i]).transitions[(AF[i]).etats[j]][k]);
 				}
 				printf("\n");
 			}

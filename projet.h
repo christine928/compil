@@ -41,18 +41,18 @@
 	}AFD;
 
 
-AFN langage_vide(); //creer un alphabet=> AFN  //lea
-AFN mot_vide(); //ajouter a un alphabet le mot vide //lea
-AFN mot(char caractere); //chr//fait
+AFN langage_vide(); //creer un alphabet=> AFN
+AFN mot_vide(); //ajouter a un alphabet le mot vide
+AFN mot(char caractere);
 
 
 AFN reunion (AFN afn1, AFN afn2);//chr//a voir avec la concat
 AFN concat (AFN afn1, AFN afn2);//lea enleve des etats accepteurs
-AFN etoile (AFN afn);//lea
+AFN etoile (AFN afn);
 
-_Bool exec_automate(AFD afd, char * mot);//chr
-AFD determinisation(AFN afn);//verifier langage identique //lea
-AFD minimisation (AFD afd); //chr
+_Bool exec_automate(AFD afd, char * mot);
+AFD determinisation(AFN afn);//verifier langage identique azerty on voulait dire quoi par là déjà ?
+AFD minimisation (AFD afd);
 
 
 //nos fonctions

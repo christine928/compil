@@ -451,7 +451,106 @@ AFN reunion (AFN afn1, AFN afn2)
 
 AFN concat (AFN afn1, AFN afn2)
 {
+	AFN new;
+	int i,j;
+	_Bool exist;
 	
+	//on garde l'état initial du premier AFN
+	new.etatInit = afn1.etatInit;
+	
+	//on unie les alphabets des deux AFN
+	new.tailleAlpha = afn1.tailleAlpha;
+	new.alphabet = malloc(new.tailleAlpha*sizeof(char));
+	for(i=0;i<new.tailleAlpha;i++){
+		new.alphabet[i] = afn1.alphabet[i];
+	}
+	
+	//on ajoute à l'alphabet les lettres de l'alphabet de afn2 qui ne sont pas déjà présentes
+	for(i=0;i<afn2.tailleAlpha; i++){
+		exist = false;
+		for(j=0;j<afn1.tailleAlpha;j++){
+			if(new.alphabet[j]==afn2.alphabet[i]){
+				exist = true;
+				break;
+			}
+		}
+		
+		if(!exist){
+			new.tailleAlpha++;
+			new.alphabet=realloc(new.alphabet,(new.tailleAlpha*sizeof(char)));
+			new.alphabet[new.tailleAlpha-1]=afn2.alphabet[i];
+		}
+	}
+	
+	//le nouvel ensemble d'etats est l'union des états des deux AFN sans l'état initial du second AFN
+	new.tailleEtats = afn1.tailleEtats + afn2.tailleEtats -1; //on suppose comme dans le cours qu'un AFN n'a qu'un état initial : 0
+	new.etats = malloc(new.tailleEtats*sizeof(int));
+	for(i=0;i<new.tailleEtats;i++){
+			new.etats[i] = i;
+	}
+	
+	//états accepteurs
+	//on regarde si l'état initial de afn2 était aussi un état accepteur
+	exist = false;
+	for(i=0;i<afn2.tailleAccept;i++){
+		if(afn2.etatInit == afn2.etatAccept[i]){
+			exist = true;
+			break;
+		}
+	}
+		
+	//si l'etat initial était un état accepteur alors les nouveaux états accepteurs sont 
+	//l'union des états accepteurs des deux AFN sans l'état inital du second AFN
+	if(exist){
+		new.tailleAccept = afn1.tailleAccept + afn2.tailleAccept -1;
+		new.etatAccept = malloc(new.tailleAccept*sizeof(int));
+		for(i=0;i<new.tailleAccept;i++){
+			if(i < afn1.tailleAccept)
+				new.etatAccept[i] = afn1.etatAccept[i];
+			else{
+				if(afn2.etatAccept[i - afn1.tailleAccept] != afn2.etatInit)
+					new.etatAccept[i] = afn2.etatAccept[i - afn1.tailleAccept] +  afn1.tailleAccept -1;
+			}
+		}
+	}	
+	
+	//si l'etat initial n'était pas un état accepteur alors les nouveaux états accepteurs sont ceux de l'afn2
+	if(!exist){
+		new.tailleAccept = afn2.tailleAccept;
+		new.etatAccept = malloc(new.tailleAccept*sizeof(int));
+		for(i=0;i<new.tailleAccept;i++){
+			new.etatAccept[i] = afn2.etatAccept[i];
+		}
+	}
+	
+	//les transitions sont celles de afn1 avec celles de afn2 sans son état initial en depart
+	//et de nouvelles transitions  entre  les états accepteurs de afn1 et les transitions partant de l'état initil de afn2
+	new.tailleTrans = afn1.tailleTrans;
+	new.transitions = malloc(new.tailleTrans*sizeof(Trans));
+	for(i=0;i<new.tailleTrans;i++){
+		new.transitions[i].depart = afn1.transitions[i].depart;
+		new.transitions[i].caractere = afn1.transitions[i].caractere;
+		new.transitions[i].arrivee = afn1.transitions[i].arrivee;
+	}
+	
+	for(i=0;i<afn2.tailleTrans;i++){
+		if(afn2.transitions[i].depart == afn2.etatInit){
+			new.tailleTrans += afn1.tailleAccept; //on ajoute autant de transition que d'état accepteur de afn1
+			new.transitions=realloc(new.transitions,(new.tailleTrans*sizeof(Trans)));
+			for(j=0;j<afn1.tailleAccept;j++){
+				new.transitions[new.tailleTrans - afn1.tailleAccept + j].depart = afn2.transitions[i].depart;
+				new.transitions[new.tailleTrans - afn1.tailleAccept + j].caractere = afn2.transitions[i].caractere;
+				new.transitions[new.tailleTrans - afn1.tailleAccept + j].arrivee = afn2.transitions[i].arrivee;
+			}
+		}
+		else{
+			new.tailleTrans++;
+			new.transitions=realloc(new.transitions,(new.tailleTrans*sizeof(Trans)));
+			new.transitions[new.tailleTrans -1].depart = afn2.transitions[i].depart;
+			new.transitions[new.tailleTrans -1].caractere = afn2.transitions[i].caractere;
+			new.transitions[new.tailleTrans -1].arrivee = afn2.transitions[i].arrivee;
+		}
+	}
 }
 
 AFN etoile (AFN afn)

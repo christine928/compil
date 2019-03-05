@@ -381,10 +381,10 @@ int main()
 	return 0;
 }
 
-AFN langage_vide() // -->()
+AFN langage_vide()
 {
 	AFN new;
-	new.tailleEtats=1;//l etat initial est l etat accepteur
+	new.tailleEtats=1;
 	new.etats=calloc(new.tailleEtats, sizeof(int));
 	new.etats[0]=0;
 	new.tailleAlpha=0;

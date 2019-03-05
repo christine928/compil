@@ -18,7 +18,7 @@
 		int * etats;
 		char * alphabet;
 		int etatInit;
-		int * etatAccept;//langage vide => rester null
+		int * etatAccept;
 		Trans * transitions;
 		int tailleEtats;
 		int tailleAlpha;
@@ -41,23 +41,23 @@
 	}AFD;
 
 
-AFN langage_vide(); //creer un alphabet=> AFN
-AFN mot_vide(); //ajouter a un alphabet le mot vide
+AFN langage_vide(); 
+AFN mot_vide(); 
 AFN mot(char caractere);
 
 
-AFN reunion (AFN afn1, AFN afn2);//chr//a voir avec la concat
+AFN reunion (AFN afn1, AFN afn2);
 AFN concat (AFN afn1, AFN afn2);
 AFN etoile (AFN afn);
 
 _Bool exec_automate(AFD afd, char * mot);
-AFD determinisation(AFN afn);//verifier langage identique azerty on voulait dire quoi par là déjà ?
+AFD determinisation(AFN afn);
 AFD minimisation (AFD afd);
 
 
 //nos fonctions
-void aff_AFN (AFN * AF, int taille);//type vaut false si AFN, true pour AFD
-void aff_AFD( AFD * AF, int taille);//type vaut false si AFN, true pour AFD
+void aff_AFN (AFN * AF, int taille);
+void aff_AFD( AFD * AF, int taille);
 int choix(int taille);
 int * remplir_entete_2(AFD afd, int ** tab, int nbreCol, int nbreLigne, int * entete, int * entete2, int * cpt);
 int contientTab(int **bigTab, int *tab, int taille);

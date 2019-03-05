@@ -610,11 +610,11 @@ AFN concat (AFN afn1, AFN afn2)
 			printf("afn1 %d\n",afn1.etatAccept[i]);
 		}
 		count = afn1.tailleAccept;
-		for(i=afn1.tailleAccept;i<afn2.tailleAccept + afn1.tailleAccept;i++){
-			if(afn2.etatAccept[i - afn1.tailleAccept] != afn2.etatInit){
-				new.etatAccept[count] = afn2.etatAccept[i - afn1.tailleAccept] +  afn1.tailleAccept;
+		for(i=afn1.tailleEtats;i<afn2.tailleAccept + afn1.tailleEtats;i++){
+			if(afn2.etatAccept[i - afn1.tailleEtats] != afn2.etatInit){
+				new.etatAccept[count] = afn2.etatAccept[i - afn1.tailleEtats] +  afn1.tailleEtats -1;
 				count++;
-				printf("afn2 etat %d <=> i = %d, val %d\n", afn2.etatAccept[i - afn1.tailleAccept], i, afn2.etatAccept[i - afn1.tailleAccept] +  afn1.tailleAccept -1);
+				printf("afn2 etat %d <=> i = %d, val %d\n", afn2.etatAccept[i - afn1.tailleEtats], i, afn2.etatAccept[i - afn1.tailleEtats] +  afn1.tailleEtats -1);
 			}
 		}
 	}	

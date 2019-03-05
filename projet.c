@@ -446,17 +446,14 @@ AFN reunion (AFN afn1, AFN afn2)
 	new.tailleEtats=afn1.tailleEtats+afn2.tailleEtats-1;//-1 car on supp les 2 etats initiaux de afn1 et afn2 et qu on rajoute celui de new
 	new.etats=calloc(new.tailleEtats, sizeof(int));
 	for(i=0; i<new.tailleEtats; i++)
-	{
 		new.etats[i]=i;
-	} 
 	
 	//alphabets
 	tailleMaxAlpha=afn1.tailleAlpha+afn2.tailleAlpha;//c est la taille max, pas forcement la reelle
 	new.alphabet=calloc(tailleMaxAlpha, sizeof(char));
 	for(i=0; i<afn1.tailleAlpha; i++)//on met l alphabet de afn1 dans l alphabet de new
-	{
 		new.alphabet[i]=afn1.alphabet[i];
-	}
+
 	new.tailleAlpha=afn1.tailleAlpha;
 	//si le caractere n est pas deja dans l alphabet de new, on rajoute celui qui est dans afn2
 	for(i=0; i<afn2.tailleAlpha; i++)
@@ -489,7 +486,7 @@ AFN reunion (AFN afn1, AFN afn2)
 	//si les 2 ont un etat initial accepteur, il faut faire -1, sinon la taille de l'un plus la taille de l'autre
 	for(i=0; i<afn1.tailleAccept; i++)
 	{
-		if(afn1.etatAccept[i]==0)
+		if(afn1.etatAccept[i]==afn1.etatInit)
 		{
 			appartient=true;
 			break;
@@ -497,7 +494,7 @@ AFN reunion (AFN afn1, AFN afn2)
 	}
 	for(i=0; i<afn2.tailleAccept; i++)
 	{
-		if(afn2.etatAccept[i]==0)
+		if(afn2.etatAccept[i]==afn2.etatInit)
 		{
 			appartient2=true;
 			break;
@@ -510,15 +507,14 @@ AFN reunion (AFN afn1, AFN afn2)
 	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
 	
 	for(i=0; i<afn1.tailleAccept; i++)
-	{
 		new.etatAccept[i]=afn1.etatAccept[i];//+0 car on a rajoute l etat initial mais enleve celui de afn1
-	}
+	
 	for(i=0; i<afn2.tailleAccept; i++)
 	{
-		if(afn2.etatAccept[i]!=0)//si l etat accepteur n est pas l etat initial
+		if(afn2.etatAccept[i]!=afn2.etatInit)//si l etat accepteur n est pas l etat initial
 			new.etatAccept[afn1.tailleAccept+i]=afn2.etatAccept[i]+afn1.tailleEtats-1;//-1 pour enlever l etat initial de afn1
-		else if ((!appartient)&&(afn2.etatAccept[i]==0))//si l etat initial est accepteur et que le 1er afn ne l avait pas
-			new.etatAccept[afn1.tailleAccept+i]=0;
+		else if ((!appartient)&&(afn2.etatAccept[i]==afn2.etatInit))//si l etat initial est accepteur et que le 1er afn n'avait pas l etat initial accepteur
+			new.etatAccept[afn1.tailleAccept+i]=afn2.etatInit;
 		
 	}
 	
@@ -533,9 +529,8 @@ AFN reunion (AFN afn1, AFN afn2)
 	}
 	for(i=0; i<afn2.tailleTrans; i++)
 	{
-		
-		if(afn2.transitions[i].depart==0)
-			new.transitions[i+afn1.tailleTrans-ecart].depart=0;//on met l etat initial
+		if(afn2.transitions[i].depart==afn2.etatInit)
+			new.transitions[i+afn1.tailleTrans-ecart].depart=afn2.etatInit;//on met l etat initial
 		else
 			new.transitions[i+afn1.tailleTrans-ecart].depart=afn2.transitions[i].depart+afn1.tailleEtats-ecart-1;//on fait attention avec les nouveaux numeros
 		
@@ -558,10 +553,8 @@ AFN concat (AFN afn1, AFN afn2)
 	//on unie les alphabets des deux AFN
 	new.tailleAlpha = afn1.tailleAlpha;
 	new.alphabet = malloc(new.tailleAlpha*sizeof(char));
-	for(i=0;i<new.tailleAlpha;i++){
+	for(i=0;i<new.tailleAlpha;i++)
 		new.alphabet[i] = afn1.alphabet[i];
-	}
-	
 	
 	//on ajoute à l'alphabet les lettres de l'alphabet de afn2 qui ne sont pas déjà présentes
 	for(i=0;i<afn2.tailleAlpha; i++){
@@ -815,7 +808,7 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 		tabNewEtats[0] = malloc(2*sizeof(int));//première case du tableau est le nombre d'états qu'il contient <=> sa taille
 		tabNewEtats[0][0] = 1; //initialement on regarde pour l'état 0 seul donc taille de 1
 		tabNewEtats[0][1] = 0;
-		afd.etats[0] = 0;//l'état initial
+		afd.etats[0] = afd.etatInit;//l'état initial
 		tabNewEtats[1] = malloc(2*sizeof(int));
 		i = 1;
 		do{
@@ -958,9 +951,9 @@ AFD minimisation (AFD afd)
 		tab[i][nbreCol-1]=0;//et donc toute la colonne 'etat mort' vaut 0 à l'initialisation
 	}
 	
-	for(j=0;  j<nbreCol-1; j++)//on remplit la premiere ligne
+	for(j=0;  j<nbreCol-1; j++)//on remplit la premiere ligne, correspondant a l entete du tableau
 	{
-		tab[0][j]=0;
+		entete[j]=0;
 		for(k=0; k<afd.tailleAccept; k++)
 		{
 			if(j==afd.etatAccept[k])//l etat est accepteur, donc on lui met l'etat 1 pour l initialisation

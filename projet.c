@@ -377,7 +377,7 @@ int main()
 		
 	}while(quitter!=true);
 	
-	printf("au revoir\n");
+	printf("Au revoir\n");
 	return 0;
 }
 
@@ -554,7 +554,7 @@ AFN concat (AFN afn1, AFN afn2)
 	
 	//on garde l'état initial du premier AFN
 	new.etatInit = afn1.etatInit;
-	printf("blop etat ini\n");
+
 	//on unie les alphabets des deux AFN
 	new.tailleAlpha = afn1.tailleAlpha;
 	new.alphabet = malloc(new.tailleAlpha*sizeof(char));
@@ -579,7 +579,6 @@ AFN concat (AFN afn1, AFN afn2)
 			new.alphabet[new.tailleAlpha-1]=afn2.alphabet[i];
 		}
 	}
-	printf("blop alpha\n");
 	
 	//le nouvel ensemble d'etats est l'union des états des deux AFN sans l'état initial du second AFN
 	new.tailleEtats = afn1.tailleEtats + afn2.tailleEtats -1; //on suppose comme dans le cours qu'un AFN n'a qu'un état initial : 0
@@ -587,7 +586,6 @@ AFN concat (AFN afn1, AFN afn2)
 	for(i=0;i<new.tailleEtats;i++){
 			new.etats[i] = i;
 	}
-	printf("blop etats\n");
 	
 	//états accepteurs
 	//on regarde si l'état initial de afn2 était aussi un état accepteur
@@ -598,7 +596,6 @@ AFN concat (AFN afn1, AFN afn2)
 			break;
 		}
 	}
-	printf("blop test exist\n");
 			
 	//si l'etat initial était un état accepteur alors les nouveaux états accepteurs sont 
 	//l'union des états accepteurs des deux AFN sans l'état inital du second AFN
@@ -607,14 +604,12 @@ AFN concat (AFN afn1, AFN afn2)
 		new.etatAccept = malloc(new.tailleAccept*sizeof(int));
 		for(i=0;i<afn1.tailleAccept;i++){
 			new.etatAccept[i] = afn1.etatAccept[i];
-			printf("afn1 %d\n",afn1.etatAccept[i]);
 		}
 		count = afn1.tailleAccept;
 		for(i=afn1.tailleEtats;i<afn2.tailleAccept + afn1.tailleEtats;i++){
 			if(afn2.etatAccept[i - afn1.tailleEtats] != afn2.etatInit){
 				new.etatAccept[count] = afn2.etatAccept[i - afn1.tailleEtats] +  afn1.tailleEtats -1;
 				count++;
-				printf("afn2 etat %d <=> i = %d, val %d\n", afn2.etatAccept[i - afn1.tailleEtats], i, afn2.etatAccept[i - afn1.tailleEtats] +  afn1.tailleEtats -1);
 			}
 		}
 	}	
@@ -627,7 +622,6 @@ AFN concat (AFN afn1, AFN afn2)
 			new.etatAccept[i] = afn2.etatAccept[i] + afn1.tailleEtats -1;
 		}
 	}
-	printf("blop etats acc\n");
 	
 	//les transitions sont celles de afn1 avec celles de afn2 sans son état initial en depart
 	//et de nouvelles transitions  entre  les états accepteurs de afn1 et les transitions partant de l'état initil de afn2
@@ -638,7 +632,6 @@ AFN concat (AFN afn1, AFN afn2)
 		new.transitions[i].caractere = afn1.transitions[i].caractere;
 		new.transitions[i].arrivee = afn1.transitions[i].arrivee;
 	}
-	printf("blop trans1\n");
 	
 	for(i=0;i<afn2.tailleTrans;i++){
 		if(afn2.transitions[i].depart == afn2.etatInit){
@@ -658,7 +651,6 @@ AFN concat (AFN afn1, AFN afn2)
 			new.transitions[new.tailleTrans -1].arrivee = afn2.transitions[i].arrivee + afn1.tailleEtats -1;
 		}
 	}
-	printf("blop\n");
 	return new;
 }
 
@@ -708,12 +700,14 @@ AFN etoile (AFN afn)
 	}
 	new.tailleTrans=afn.tailleTrans+tailleTransInit*afn.tailleAccept;
 	new.transitions=calloc(new.tailleTrans, sizeof(Trans));
-	for(i=0; i<afn.tailleTrans; i++)//on recupere tous les indices des transitions partant de l etat initial
+	for(i=0; i<afn.tailleTrans; i++)//on recopie toutes les transitions existantes
 	{
 		new.transitions[i].depart=afn.transitions[i].depart;
 		new.transitions[i].caractere=afn.transitions[i].caractere;
 		new.transitions[i].arrivee=afn.transitions[i].arrivee;
 	}
+	
+	//on ajoute les transitions dues a la mise a l etoile
 	indTrans=afn.tailleTrans;
 	for(i=0; i<afn.tailleAccept; i++)
 	{
@@ -724,7 +718,8 @@ AFN etoile (AFN afn)
 			existe=false;
 			for(k=0; k<indTrans; k++)
 			{
-				if((new.transitions[k].depart==depart)&&(new.transitions[k].caractere==carac)&&(new.transitions[k].arrivee==arrivee))//cette transition existe deja
+				//la transition existe deja
+				if((new.transitions[k].depart==depart)&&(new.transitions[k].caractere==carac)&&(new.transitions[k].arrivee==arrivee))
 				{
 					existe=true;
 					break;
@@ -738,7 +733,6 @@ AFN etoile (AFN afn)
 			}
 			else
 			{
-				//printf("on ajoute en %d (%d, %c, %d\n", indTrans, afn.etatAccept[i], afn.transitions[transInit[j]].caractere, afn.transitions[transInit[j]].arrivee);
 				new.transitions[indTrans].depart=afn.etatAccept[i];
 				new.transitions[indTrans].caractere=afn.transitions[transInit[j]].caractere;
 				new.transitions[indTrans].arrivee=afn.transitions[transInit[j]].arrivee;
@@ -746,7 +740,6 @@ AFN etoile (AFN afn)
 			}
 		}
 	}
-	
 	
 	return new;
 }
@@ -759,7 +752,7 @@ _Bool exec_automate(AFD afd, char * mot)
 	{
 		for(j=0; j<afd.tailleAlpha; j++)
 		{
-			if(mot[i]==afd.alphabet[j])
+			if(mot[i]==afd.alphabet[j])//on verifie si le caractere est bien dans l alphabet de l afd
 			{
 				existe=true;
 				break;
@@ -771,9 +764,8 @@ _Bool exec_automate(AFD afd, char * mot)
 			retour=false;
 			break;
 		}
-			
-
-		depart=afd.transitions[depart][j];
+		
+		depart=afd.transitions[depart][j];//on reinitialise d'ou on va partir pour la prochaine transition
 
 		if(depart==-1)
 		{
@@ -831,22 +823,15 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 			afd.transitions[afd.etats[init]] = realloc(afd.transitions[afd.etats[init]], afd.tailleAlpha*sizeof(int));
 			for(j=0;j<afd.tailleAlpha;j++){//on regarde le caractère j
 				for(length=1;length<tabNewEtats[init][0]+1;length++){//on regarde état par état (les états composants le nouvel état de l'afd)
-					printf("on est dans l'état init %d contenant les états %d\n", init, tabNewEtats[init][length]); 
 					for(k=0;k<afn.tailleTrans;k++){ //si une transistion j existe alors on écrit l'Etat d'arrivé (de l'afn) à la suite du nouvel Etat en cours de création
-						printf("on regarde la transition (%d,%c,%d)\n", afn.transitions[k].depart, afn.transitions[k].caractere, afn.transitions[k].arrivee); 
-						printf("on compare à %d et %c\n", tabNewEtats[init][length], afd.alphabet[j]);
 						if((afn.transitions[k].depart == tabNewEtats[init][length]) && (afn.transitions[k].caractere == afd.alphabet[j])){
-							printf("\n");
 							if(l != 0){
 								for(m=1;m<l+1;m++){
-									printf("%d, ", tabNewEtats[i][m]);
 									if(tabNewEtats[i][m] == afn.transitions[k].arrivee){
-										printf("TROUVE\n");
 										exist = true;
 										break;
 									}
 								}
-								printf("\n");
 							}
 							
 							if(!exist){
@@ -855,11 +840,9 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 								tabNewEtats[i] = realloc(tabNewEtats[i], (l+1)*sizeof(int));
 								tabNewEtats[i][l] = afn.transitions[k].arrivee;
 								trans = true;
-								printf("transition existe %d %c\n", tabNewEtats[init][length], afd.alphabet[j]);
 								for(m=0;m<afn.tailleAccept;m++){
 									if(afn.etatAccept[m] == tabNewEtats[i][l]){//si au moins un état composant le nouvel état était accepteur alors le nouvel état est accepteur
 										etatAcc = true;
-										printf("etat accepteur : %d\n",tabNewEtats[i][l]);
 									}
 								}
 							}
@@ -871,16 +854,13 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 				if(trans){
 					tabNewEtats[i][0] = taille;
 					identique = contientTab(tabNewEtats, tabNewEtats[i],i);//on verifie si l'état existait déjà ou pas
-					printf("retour contient tab %d\n", identique);
 					if(identique == -1){//si le couple n'existait pas déjà
 						//création d'un nouvel état
 						afd.etats = realloc(afd.etats, (afd.tailleEtats+1)*sizeof(int));
 						afd.etats[afd.tailleEtats] = i;
 											
 						//création nouvelle transition de l'état init vers l'état i via le caractère j
-						afd.transitions[afd.etats[init]][j] = afd.etats[afd.tailleEtats];
-						printf("trans amene sur nouveau : transition[%d][%c] = %d\n", afd.etats[init], afd.alphabet[j], afd.etats[afd.tailleEtats]);
-						
+						afd.transitions[afd.etats[init]][j] = afd.etats[afd.tailleEtats];						
 						afd.tailleEtats ++;//nombre d'états actuellement créés
 						
 						//si contient au moins un état accepteur est accepteur
@@ -894,8 +874,6 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 						
 					else{
 						afd.transitions[afd.etats[init]][j] = identique;
-						printf("trans amene sur existant : transition[%d][%c] = %d\n", afd.etats[init], afd.alphabet[j], identique);
-						printf("test\n");
 						free(tabNewEtats[i]);
 					}
 					tabNewEtats = realloc(tabNewEtats, (i+1)*sizeof(int*));
@@ -904,17 +882,14 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 					l = 0;
 				}
 			
-			//si aucun nouvel état n'est créé pour une transition avec le caractère j
-			else{
-				afd.transitions[afd.etats[init]][j] = -1;
-				printf("trans amene sur rien : transition[%d][%c] = -1\n", afd.etats[init], afd.alphabet[j]);
-			}
-			
-			nbTrans ++;//nombre de transistions actuellement créées	
+				//si aucun nouvel état n'est créé pour une transition avec le caractère j
+				else
+					afd.transitions[afd.etats[init]][j] = -1;
+				
+				nbTrans ++;//nombre de transistions actuellement créées	
 			}
 			
 			init ++;
-			printf("\tFINIIIIIIIIIIIIIIIS ? init %d i %d\n", init, i);	
 			if(init == i)//il n'y a pas de nouveau couple et on a déjà testé tous les couples trouvés
 				stop = true;
 		}while(stop == false);
@@ -932,15 +907,11 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 			afd.transitions[i] = malloc(afd.tailleAlpha * sizeof(int));
 			for(j=0;j<afn.tailleAlpha;j++){
 				for(k=0;k<afn.tailleTrans;k++){
-					if((afn.transitions[k].depart == i) && (afn.transitions[k].caractere == afd.alphabet[j])){
+					if((afn.transitions[k].depart == i) && (afn.transitions[k].caractere == afd.alphabet[j]))
 						afd.transitions[i][j] = afn.transitions[k].arrivee;
-						printf("afn deja afd et une trans existe : transition[%d][%c] = %d\n", afd.etats[i], afd.alphabet[j], afn.transitions[k].arrivee);
-					}
 				}
-				if(!afd.transitions[i][j]){
+				if(!afd.transitions[i][j])
 					afd.transitions[i][j] = -1;
-					printf("afn deja afd et aucune trans existe : transition[%d][%c] = -1\n", afd.etats[i], afd.alphabet[j]);
-				}
 			}
 		}
 	}
@@ -949,11 +920,9 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 
 int contientTab(int **bigTab, int *tab, int taille)
 {
-	printf("\tFONCTION\n");
 	int i,j, res = -1;
 	_Bool contient = false;
 	for(i=0;i<taille;i++){
-		printf("\ttailleBigTab = %d, tab = %d\n", bigTab[i][0], tab[0]);
 		if(bigTab[i][0] == tab[0]){//si les tableaux sont de même taille on les compare
 			contient = true;
 			for(j=1;j<tab[0]+1;j++){
@@ -961,7 +930,6 @@ int contientTab(int **bigTab, int *tab, int taille)
 					contient = false;
 			}
 			if(contient){
-				printf("\texiste\n");
 				res = i;
 				break;
 			}
@@ -995,7 +963,7 @@ AFD minimisation (AFD afd)
 		tab[0][j]=0;
 		for(k=0; k<afd.tailleAccept; k++)
 		{
-			if(j==afd.etatAccept[k])//l etat est accepteur
+			if(j==afd.etatAccept[k])//l etat est accepteur, donc on lui met l'etat 1 pour l initialisation
 			{
 				entete[j]=1;
 				break;
@@ -1008,29 +976,15 @@ AFD minimisation (AFD afd)
 			tab[i][j]=entete[afd.transitions[j][i]];
 	}
 	
-	/*printf("\t");
-	for(j=0; j<nbreCol; j++)
-		printf("%d\t", j);	
-	printf("\n");
-	for(j=0; j<nbreCol; j++)
-		printf("\t%d", entete[j]);
-	for(i=0; i<nbreLigne; i++)
-	{
-		
-		printf("\n%c\t", afd.alphabet[i]);
-		for(j=0; j<nbreCol; j++)
-			printf("%d\t", tab[i][j]);
-	}
-	printf("\n");*/
 	
-	//deuxieme entete
+	//on remplit deuxieme entete en numerotant les colonnes différentes
 	entete2=remplir_entete_2(afd, tab, nbreCol, nbreLigne, entete, entete2, &cpt);
 	arret=true;
-	//verification des deux entetes : 
+	//verification si les les deux entetes sont identiques, donc si on peut s arreter
 	for(j=0; j<nbreCol; j++)
 	{
 		arret=arret&&(entete[j]==entete2[j]);//si on trouve une entete de fausse alors on continue
-		entete[j]=entete2[j];
+		entete[j]=entete2[j];//l entete2 devient l entete principale
 	}
 	
 	while(!arret)
@@ -1050,29 +1004,14 @@ AFD minimisation (AFD afd)
 		entete2=remplir_entete_2(afd, tab, nbreCol, nbreLigne, entete, entete2, &cpt);
 		arret=true;
 		
-		/*//affichage : 
-		printf("\n\t");
-		for(j=0; j<nbreCol; j++)
-			printf("%d\t", j);
-		printf("\n\t");
-		for(j=0; j<nbreCol; j++)
-			printf("%d\t", entete[j]);
-		for(i=0; i<nbreLigne; i++)
-		{
-			
-			printf("\n%c\t", afd.alphabet[i]);
-			for(j=0; j<nbreCol; j++)
-				printf("%d\t", tab[i][j]);
-		}
-		printf("\n");*/
-		
-		//verification des deux entetes : 
+		//verification si les deux entetes sont identiques : 
 		for(j=0; j<nbreCol; j++)
 		{
 			arret=arret&&(entete[j]==entete2[j]);//si on trouve une entete de fausse alors on continue
 			entete[j]=entete2[j];
 		}
 	}
+	
 	AFD new;
 	new.tailleEtats=cpt-1;//l etat initial et l etat accepteur
 	new.etats=calloc(new.tailleEtats, sizeof(int));
@@ -1089,7 +1028,6 @@ AFD minimisation (AFD afd)
 	for(i=1; i<new.tailleAccept; i++)
 	{
 		existe=false;
-		
 		for(j=0; j<i; j++)
 		{
 			if(new.etatAccept[j]==entete[afd.etatAccept[i]])//on l a deja mis comme etat accepteur
@@ -1111,7 +1049,10 @@ AFD minimisation (AFD afd)
 			new.transitions[cpt_col]=calloc(new.tailleAlpha, sizeof(int));
 			for(j=0; j<new.tailleAlpha; j++)
 			{
-				new.transitions[cpt_col][j]=tab[j][i];
+				if(tab[j][i]==entete[nbreCol-1])//va vers l etat mort
+					new.transitions[cpt_col][j]=-1;
+				else
+					new.transitions[cpt_col][j]=tab[j][i];
 			}
 			cpt_col++;
 		}
@@ -1141,13 +1082,13 @@ int * remplir_entete_2(AFD afd, int ** tab, int nbreCol, int nbreLigne, int * en
 			}
 			trouve=trouve||col_identique;//on retient si on a trouve une colonne
 			
-			if(col_identique)
+			if(col_identique)//on a trouve une colonne identique, donc son entete est la meme.
 			{
 				numCol=entete2[k];
 				break;
 			}
 		}
-		if(!trouve)
+		if(!trouve)//on a pas trouve de colonnes identiques, donc on rajoute un numero de plus.
 		{
 			numCol=(*cpt);
 			(*cpt)+=1;
@@ -1288,7 +1229,7 @@ int choix(int taille)
 	int ind;
 	do
 	{
-		printf("quel AF choisir?\n");
+		printf("Quel AF choisir?\n");
 		scanf(" %d",&ind);
 	}while (ind<0 || ind >= taille);
 	return ind;

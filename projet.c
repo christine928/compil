@@ -549,7 +549,7 @@ AFN reunion (AFN afn1, AFN afn2)
 AFN concat (AFN afn1, AFN afn2)
 {
 	AFN new;
-	int i,j;
+	int i,j, count;
 	_Bool exist;
 	
 	//on garde l'état initial du premier AFN
@@ -605,12 +605,16 @@ AFN concat (AFN afn1, AFN afn2)
 	if(exist){
 		new.tailleAccept = afn1.tailleAccept + afn2.tailleAccept -1;
 		new.etatAccept = malloc(new.tailleAccept*sizeof(int));
-		for(i=0;i<new.tailleAccept;i++){
-			if(i < afn1.tailleAccept)
-				new.etatAccept[i] = afn1.etatAccept[i];
-			else{
-				if(afn2.etatAccept[i - afn1.tailleAccept] != afn2.etatInit)
-					new.etatAccept[i] = afn2.etatAccept[i - afn1.tailleAccept] +  afn1.tailleAccept -1;
+		for(i=0;i<afn1.tailleAccept;i++){
+			new.etatAccept[i] = afn1.etatAccept[i];
+			printf("afn1 %d\n",afn1.etatAccept[i]);
+		}
+		count = afn1.tailleAccept;
+		for(i=afn1.tailleAccept;i<afn2.tailleAccept + afn1.tailleAccept;i++){
+			if(afn2.etatAccept[i - afn1.tailleAccept] != afn2.etatInit){
+				new.etatAccept[count] = afn2.etatAccept[i - afn1.tailleAccept] +  afn1.tailleAccept;
+				count++;
+				printf("afn2 etat %d <=> i = %d, val %d\n", afn2.etatAccept[i - afn1.tailleAccept], i, afn2.etatAccept[i - afn1.tailleAccept] +  afn1.tailleAccept -1);
 			}
 		}
 	}	

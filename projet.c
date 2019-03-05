@@ -644,6 +644,27 @@ AFN concat (AFN afn1, AFN afn2)
 			new.transitions[new.tailleTrans -1].arrivee = afn2.transitions[i].arrivee + afn1.tailleEtats -1;
 		}
 	}
+	
+	//si on a aucune transition et un état accepteur autre que l'état initial 0 alors
+	//on est dans le cas d'une concatenation avec le langage vide
+	if(((new.tailleTrans == 0) && (new.tailleAccept > 1)) || ((new.tailleTrans == 0) && (new.tailleAccept == 1) && (new.etatAccept[0] != 0))){
+		//on libère les données faussées
+		free(new.alphabet);
+		free(new.etats);
+		free(new.etatAccept);
+		
+		//on définit l'automate comme le langage vide
+		new.tailleEtats=1;
+		new.etats=calloc(new.tailleEtats, sizeof(int));
+		new.etats[0]=0;
+		new.tailleAlpha=0;
+		new.alphabet=NULL;
+		new.etatInit=0;
+		new.tailleAccept=0;
+		new.etatAccept=NULL;
+		new.tailleTrans=0;
+		new.transitions=NULL;
+	}
 	return new;
 }
 

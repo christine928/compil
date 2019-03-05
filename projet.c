@@ -8,7 +8,7 @@ int main()
 {
 	
 	AFN * tabAFN=malloc(0*sizeof(AFN));
-	//AFD * tabAFD=malloc(0*sizeof(AFD));
+	AFD * tabAFD=malloc(0*sizeof(AFD));
 	int tailleTabAFN=0, tailleTabAFD=0, i;
 	_Bool quitter=false;
 	int rep;
@@ -16,7 +16,7 @@ int main()
 	int ind1, ind2;
 	_Bool existe;
 	
-	tailleTabAFN=5;
+	/*tailleTabAFN=5;
 	tabAFN=malloc(tailleTabAFN*sizeof(AFN));
 	tabAFN[0].tailleEtats=4;
 	tabAFN[0].etats=calloc(tabAFN[0].tailleEtats, sizeof(int));
@@ -270,7 +270,7 @@ int main()
 	tabAFD[2].transitions[1][1]=2;
 	tabAFD[2].transitions[2][0]=1;
 	tabAFD[2].transitions[2][1]=2;
-	
+	*/
 	do
 	{
 		do
@@ -675,7 +675,13 @@ AFN etoile (AFN afn)
 	new.etatAccept[0]=new.etatInit;
 	for(i=0; i<afn.tailleAccept; i++)
 	{
-		new.etatAccept[i+1]=afn.etatAccept[i];
+		if(afn.etatAccept[i]!=afn.etatInit)
+			new.etatAccept[i+1]=afn.etatAccept[i];
+		else
+		{
+			new.tailleAccept--;
+			new.etatAccept=realloc(new.etatAccept, new.tailleAccept*sizeof(int));
+		}
 	}
 	
 	//transistions
@@ -1105,7 +1111,7 @@ void aff_AFN( AFN * AF, int taille)
 	{
 		printf("case %d\n", i);
 		//etat
-		printf("\tetat = { ");
+		printf("\tetats = { ");
 		for(j=0; j<(AF[i]).tailleEtats; j++)
 		{
 			printf("%d ", (AF[i]).etats[j]);
@@ -1160,7 +1166,7 @@ void aff_AFD( AFD * AF, int taille)
 		printf("case %d\n", i);
 		
 		//etat
-		printf("\tetat = { ");
+		printf("\tetats = { ");
 		for(j=0; j<(AF[i]).tailleEtats; j++)
 		{
 			printf("%d ", (AF[i]).etats[j]);

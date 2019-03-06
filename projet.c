@@ -9,7 +9,7 @@ int main()
 	
 	AFN * tabAFN=malloc(0*sizeof(AFN));
 	AFD * tabAFD=malloc(0*sizeof(AFD));
-	int tailleTabAFN=0, tailleTabAFD=0, i;
+	int tailleTabAFN=0, tailleTabAFD=0, i, j;
 	_Bool quitter=false;
 	int rep;
 	char car, chaine[100];
@@ -377,6 +377,25 @@ int main()
 		
 	}while(quitter!=true);
 	
+	for(i=0; i<tailleTabAFN; i++)
+	{
+		free(tabAFN[i].etats);
+		free(tabAFN[i].alphabet);
+		free(tabAFN[i].etatAccept);
+		free(tabAFN[i].transitions);
+	}
+	free(tabAFN);
+	
+	for(i=0; i<tailleTabAFD; i++)
+	{
+		free(tabAFD[i].etats);
+		free(tabAFD[i].alphabet);
+		free(tabAFD[i].etatAccept);
+		for(j=0; j<tabAFD[i].tailleEtats; j++)
+			free(tabAFD[i].transitions[j]);
+		free(tabAFD[i].transitions);
+	}
+	free(tabAFD);
 	printf("Au revoir\n");
 	return 0;
 }
@@ -407,7 +426,7 @@ AFN mot_vide()
 	new.alphabet=NULL;
 	new.etatInit=0;
 	new.tailleAccept=1;
-	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
+	new.etatAccept=calloc(new.tailleAccept, sizeof(int));
 	new.etatAccept[0]=0;
 	new.tailleTrans=0;
 	new.transitions=NULL;
@@ -425,7 +444,7 @@ AFN mot(char caractere)
 	new.alphabet[0]=caractere;
 	new.etatInit=0;
 	new.tailleAccept=1;
-	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
+	new.etatAccept=calloc(new.tailleAccept, sizeof(int));
 	new.etatAccept[0]=1;
 	new.tailleTrans=1;
 	new.transitions=calloc(new.tailleTrans, sizeof(Trans));
@@ -504,7 +523,7 @@ AFN reunion (AFN afn1, AFN afn2)
 	if(appartient&&appartient2)//les deux ont un etat initial accepteur
 		new.tailleAccept--;
 	
-	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
+	new.etatAccept=calloc(new.tailleAccept, sizeof(int));
 	
 	for(i=0; i<afn1.tailleAccept; i++)
 		new.etatAccept[i]=afn1.etatAccept[i];//+0 car on a rajoute l etat initial mais enleve celui de afn1
@@ -761,6 +780,8 @@ AFN etoile (AFN afn)
 		}
 	}
 	
+	free(transInit);
+	
 	return new;
 }
 
@@ -993,7 +1014,10 @@ AFD minimisation (AFD afd)
 	for(i=0; i<nbreLigne; i++) //on remplit le reste du tableau
 	{
 		for(j=0; j<nbreCol-1;j++)
-			tab[i][j]=entete[afd.transitions[j][i]];
+			if(afd.transitions[j][i]!=-1)
+				tab[i][j]=entete[afd.transitions[j][i]];
+			else
+				tab[i][j]=entete[nbreCol-1];
 	}
 	
 	
@@ -1043,7 +1067,7 @@ AFD minimisation (AFD afd)
 			new.alphabet[i]=afd.alphabet[i];
 	new.etatInit=afd.etatInit;
 	new.tailleAccept=afd.tailleAccept;
-	new.etatAccept=calloc(new.tailleAccept, sizeof(char));
+	new.etatAccept=calloc(new.tailleAccept, sizeof(int));
 	new.etatAccept[0]=entete[afd.etatAccept[0]];
 	for(i=1; i<new.tailleAccept; i++)
 	{
@@ -1077,6 +1101,12 @@ AFD minimisation (AFD afd)
 			cpt_col++;
 		}
 	}
+	
+	free(entete);
+	free(entete2);
+	for(i=0; i<nbreLigne; i++)
+		free(tab[i]);
+	free(tab);
 	return new;
 }
 

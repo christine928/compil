@@ -673,16 +673,7 @@ AFN concat (AFN afn1, AFN afn2)
 		free(new.etatAccept);
 		
 		//on définit l'automate comme le langage vide
-		new.tailleEtats=1;
-		new.etats=calloc(new.tailleEtats, sizeof(int));
-		new.etats[0]=0;
-		new.tailleAlpha=0;
-		new.alphabet=NULL;
-		new.etatInit=0;
-		new.tailleAccept=0;
-		new.etatAccept=NULL;
-		new.tailleTrans=0;
-		new.transitions=NULL;
+		new = langage_vide();
 	}
 	return new;
 }

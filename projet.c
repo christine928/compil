@@ -666,7 +666,7 @@ AFN concat (AFN afn1, AFN afn2)
 	
 	//si on a aucune transition et un état accepteur autre que l'état initial 0 alors
 	//on est dans le cas d'une concatenation avec le langage vide
-	if(((new.tailleTrans == 0) && (new.tailleEtats > 1)) || ((new.tailleTrans == 0) && (new.tailleEtats == 1) && (new.tailleAccept == 0))){
+	if(((new.tailleTrans == 0) && (new.tailleEtats > 1)) || ((new.tailleTrans != 0) && (new.tailleAccept == 0)) || ((new.tailleTrans == 0) && (new.tailleEtats == 1) && (new.tailleAccept == 0))){
 		//on libère les données faussées
 		free(new.alphabet);
 		free(new.etats);

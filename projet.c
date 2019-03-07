@@ -666,7 +666,7 @@ AFN concat (AFN afn1, AFN afn2)
 	
 	//si on a aucune transition et un état accepteur autre que l'état initial 0 alors
 	//on est dans le cas d'une concatenation avec le langage vide
-	if(((new.tailleTrans == 0) && (new.tailleAccept > 1)) || ((new.tailleTrans == 0) && (new.tailleAccept == 1) && (new.etatAccept[0] != 0))){
+	if(((new.tailleTrans == 0) && (new.tailleEtats > 1)) || ((new.tailleTrans == 0) && (new.tailleEtats == 1) && (new.tailleAccept == 0))){
 		//on libère les données faussées
 		free(new.alphabet);
 		free(new.etats);
@@ -947,12 +947,11 @@ AFD determinisation(AFN afn) //cas transitions vaut -1
 		for(i=0;i<afn.tailleEtats;i++){
 			afd.transitions[i] = malloc(afd.tailleAlpha * sizeof(int));
 			for(j=0;j<afn.tailleAlpha;j++){
+				afd.transitions[i][j] = -1;
 				for(k=0;k<afn.tailleTrans;k++){
 					if((afn.transitions[k].depart == i) && (afn.transitions[k].caractere == afd.alphabet[j]))
 						afd.transitions[i][j] = afn.transitions[k].arrivee;
-				}
-				if(!afd.transitions[i][j])
-					afd.transitions[i][j] = -1;
+				}					
 			}
 		}
 	}
